@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hca"
+version = "0.1.0"
+description = "Human-in-the-loop CAD change agents with local LLMs: free code vs typed tools vs verify-and-repair, with a security layer and measured results"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Pavan Yadav Annappa" }]
+requires-python = ">=3.10"
+dependencies = [
+  "cadquery==2.5.2",
+  "pydantic>=2.6",
+  "pyyaml>=6",
+  "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5"]
+publish = ["huggingface_hub>=0.24"]
+
+[project.scripts]
+hca = "hca.cli:main"
+
+[tool.setuptools]
+packages = ["hca"]
+
+[tool.ruff]
+line-length = 130
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["B008"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

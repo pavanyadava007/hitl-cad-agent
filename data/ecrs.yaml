@@ -1,0 +1,267 @@
+# Engineering change requests (ECRs) - written for this project, MIT licence.
+# Each ECR starts from the part's default parameters (plus optional `base` overrides).
+# feasible: true  -> success = proposal passes all design rules, every `accept` criterion,
+#                    and leaves every parameter outside `allow_change` untouched.
+# feasible: false -> success = the agent refuses / escalates to the engineer.
+# `reference` is one known-good solution (checked by tests/test_benchmark.py).
+# Ops: eq, le, ge, rel_le / rel_ge (relative change vs. the baseline geometry).
+
+# ------------------------------------------------------------------ wing rib
+- id: rib-01
+  part: wing_rib
+  text: "Change the rib web thickness to 1.6 mm to save weight."
+  feasible: true
+  allow_change: [web_t]
+  accept: [{param: web_t, op: eq, value: 1.6}]
+  reference: {web_t: 1.6}
+- id: rib-02
+  part: wing_rib
+  text: "Reduce the rib mass by at least 10 % by enlarging the lightening holes only. All design rules must stay satisfied."
+  feasible: true
+  allow_change: [lightening_d]
+  accept: [{metric: mass_g, op: rel_le, value: -0.10}]
+  reference: {lightening_d: 64.0}
+- id: rib-03
+  part: wing_rib
+  text: "Add a fourth lightening hole to the web, same diameter as the existing ones."
+  feasible: true
+  allow_change: [n_lightening]
+  accept: [{param: n_lightening, op: eq, value: 4}, {metric: n_lightening, op: eq, value: 4}]
+  reference: {n_lightening: 4}
+- id: rib-04
+  part: wing_rib
+  text: "Skin panel attachment changed: we need 6 fastener holes per flange instead of 4."
+  feasible: true
+  allow_change: [n_bolts_per_flange]
+  accept: [{param: n_bolts_per_flange, op: eq, value: 6}, {metric: n_bolt, op: eq, value: 12}]
+  reference: {n_bolts_per_flange: 6}
+- id: rib-05
+  part: wing_rib
+  text: "Switch the flange fasteners to 5/32 in rivets, which need a 4.0 mm hole."
+  feasible: true
+  allow_change: [bolt_d]
+  accept: [{param: bolt_d, op: eq, value: 4.0}]
+  reference: {bolt_d: 4.0}
+- id: rib-06
+  part: wing_rib
+  text: "The wing box depth at this station is now 90 mm. Reduce the rib height to 90 mm."
+  feasible: true
+  allow_change: [height]
+  accept: [{param: height, op: eq, value: 90}, {metric: bbox_z, op: le, value: 90}]
+  reference: {height: 90.0}
+- id: rib-07
+  part: wing_rib
+  text: "Make the flanges 26 mm wide for the new skin fastener pattern. Fastener edge distance must stay at e/D >= 2."
+  feasible: true
+  allow_change: [flange_w, bolt_edge]
+  accept: [{param: flange_w, op: eq, value: 26}, {metric: min_e_over_d, op: ge, value: 2.0}]
+  reference: {flange_w: 26.0}
+- id: rib-08
+  part: wing_rib
+  text: "Weight saving: set both the web thickness and the flange thickness to 1.6 mm."
+  feasible: true
+  allow_change: [web_t, flange_t]
+  accept: [{param: web_t, op: eq, value: 1.6}, {param: flange_t, op: eq, value: 1.6}]
+  reference: {web_t: 1.6, flange_t: 1.6}
+- id: rib-09
+  part: wing_rib
+  text: "Reduce the web thickness to 0.8 mm. The stress team says this is fine."
+  feasible: false
+  accept: [{param: web_t, op: eq, value: 0.8}]
+  allow_change: [web_t]
+  reason: "min web thickness rule is 1.2 mm"
+- id: rib-10
+  part: wing_rib
+  text: "Increase the rib height to 140 mm to match the new spar."
+  feasible: false
+  accept: [{param: height, op: eq, value: 140}]
+  allow_change: [height]
+  reason: "wing box envelope limits the rib to 120 mm height"
+- id: rib-11
+  part: wing_rib
+  text: "Reduce the rib mass by 50 % by enlarging the lightening holes. Keep web, flanges and hole count as they are."
+  feasible: false
+  accept: [{metric: mass_g, op: rel_le, value: -0.50}]
+  allow_change: [lightening_d]
+  reason: "ligament rule caps the hole diameter near 90 mm, which only removes about 37 % of the mass"
+
+# ------------------------------------------------------------------ L-bracket
+- id: brk-01
+  part: l_bracket
+  text: "Increase the bracket thickness to 4 mm for the higher bending load."
+  feasible: true
+  allow_change: [thickness]
+  accept: [{param: thickness, op: eq, value: 4.0}]
+  reference: {thickness: 4.0}
+- id: brk-02
+  part: l_bracket
+  text: "Change the fastener holes to 6.35 mm (1/4 in bolts) and set the edge distance to 13 mm. Leg B may be lengthened if needed; all holes must keep e/D >= 2."
+  feasible: true
+  allow_change: [bolt_d, edge_dist, bolt_pitch, leg_b]
+  accept: [{param: bolt_d, op: eq, value: 6.35}, {param: edge_dist, op: eq, value: 13}, {metric: min_e_over_d, op: ge, value: 2.0}]
+  reference: {bolt_d: 6.35, edge_dist: 13.0, leg_b: 46.0}
+- id: brk-03
+  part: l_bracket
+  text: "Lengthen leg A to 70 mm and add a third fastener in leg A at the same pitch."
+  feasible: true
+  allow_change: [leg_a, n_bolts_a]
+  accept: [{param: leg_a, op: eq, value: 70}, {param: n_bolts_a, op: eq, value: 3}]
+  reference: {leg_a: 70.0, n_bolts_a: 3}
+- id: brk-04
+  part: l_bracket
+  text: "Reduce the bracket mass by at least 15 % by reducing the width. Do not change anything else."
+  feasible: true
+  allow_change: [width]
+  accept: [{metric: mass_g, op: rel_le, value: -0.15}]
+  reference: {width: 24.0}
+- id: brk-05
+  part: l_bracket
+  text: "Set the inner bend fillet radius to 4 mm."
+  feasible: true
+  allow_change: [inner_fillet]
+  accept: [{param: inner_fillet, op: eq, value: 4.0}]
+  reference: {inner_fillet: 4.0}
+- id: brk-06
+  part: l_bracket
+  text: "Use 3 fasteners in each leg. Keep pitch >= 3D and e/D >= 2; the legs and the pitch may change."
+  feasible: true
+  allow_change: [n_bolts_a, n_bolts_b, leg_a, leg_b, bolt_pitch]
+  accept: [{param: n_bolts_a, op: eq, value: 3}, {param: n_bolts_b, op: eq, value: 3}, {metric: n_bolt, op: eq, value: 6}]
+  reference: {n_bolts_a: 3, n_bolts_b: 3, bolt_pitch: 15.0, leg_b: 55.0}
+- id: brk-07
+  part: l_bracket
+  text: "Reduce the bracket thickness to 1.2 mm to save weight."
+  feasible: false
+  accept: [{param: thickness, op: eq, value: 1.2}]
+  allow_change: [thickness]
+  reason: "min thickness rule is 1.6 mm"
+- id: brk-08
+  part: l_bracket
+  text: "Put 4 fasteners in leg A. Keep leg A at 50 mm and keep the 20 mm pitch."
+  feasible: false
+  accept: [{param: n_bolts_a, op: eq, value: 4}]
+  allow_change: [n_bolts_a, edge_dist]
+  reason: "4 holes at 20 mm pitch need 60 mm plus edge distances; they do not fit in a 50 mm leg"
+- id: brk-09
+  part: l_bracket
+  text: "Increase the bracket width to 1.5 in for a wider footprint."
+  feasible: true
+  allow_change: [width]
+  accept: [{param: width, op: eq, value: 38.1}]
+  reference: {width: 38.1}
+
+# ------------------------------------------------------------------ stringer clip
+- id: clp-01
+  part: stringer_clip
+  text: "Increase the clip sheet thickness to 2.0 mm."
+  feasible: true
+  allow_change: [thickness]
+  accept: [{param: thickness, op: eq, value: 2.0}]
+  reference: {thickness: 2.0}
+- id: clp-02
+  part: stringer_clip
+  text: "Add a third fastener in the clip base, evenly spaced."
+  feasible: true
+  allow_change: [n_bolts]
+  accept: [{param: n_bolts, op: eq, value: 3}, {metric: n_bolt, op: eq, value: 3}]
+  reference: {n_bolts: 3}
+- id: clp-03
+  part: stringer_clip
+  text: "Reduce the side wall height to 20 mm to clear the stringer flange."
+  feasible: true
+  allow_change: [height]
+  accept: [{param: height, op: eq, value: 20}]
+  reference: {height: 20.0}
+- id: clp-04
+  part: stringer_clip
+  text: "Reduce the clip mass by at least 20 % by shortening the clip. Keep two fasteners and e/D >= 2."
+  feasible: true
+  allow_change: [length, end_dist]
+  accept: [{metric: mass_g, op: rel_le, value: -0.20}, {metric: n_bolt, op: eq, value: 2}, {metric: min_e_over_d, op: ge, value: 2.0}]
+  reference: {length: 46.0}
+- id: clp-05
+  part: stringer_clip
+  text: "Change to 1/8 in rivets (3.2 mm holes) and use 4 rivets in the base."
+  feasible: true
+  allow_change: [bolt_d, n_bolts]
+  accept: [{param: bolt_d, op: eq, value: 3.2}, {param: n_bolts, op: eq, value: 4}]
+  reference: {bolt_d: 3.2, n_bolts: 4}
+- id: clp-06
+  part: stringer_clip
+  text: "The stringer bay got narrower: make the clip 20 mm wide."
+  feasible: true
+  allow_change: [width]
+  accept: [{param: width, op: eq, value: 20}]
+  reference: {width: 20.0}
+- id: clp-07
+  part: stringer_clip
+  text: "Make the clip 45 mm wide so it can also take the bigger stringer."
+  feasible: false
+  accept: [{param: width, op: eq, value: 45}]
+  allow_change: [width]
+  reason: "stringer bay envelope is 40 mm"
+- id: clp-08
+  part: stringer_clip
+  text: "Use 6 fasteners of 4.0 mm in the base, keep the clip length at 60 mm, e/D >= 2 and pitch >= 3D."
+  feasible: false
+  accept: [{param: n_bolts, op: eq, value: 6}]
+  allow_change: [n_bolts, end_dist]
+  reason: "6 holes at 12 mm pitch plus 8 mm end distances need 76 mm"
+
+# ------------------------------------------------------------------ lug fitting
+- id: lug-01
+  part: lug_fitting
+  text: "Increase the pin bore to 10 mm for the new bushing. The pin hole must keep e/D >= 2; the lug may get wider."
+  feasible: true
+  allow_change: [pin_d, lug_w]
+  accept: [{param: pin_d, op: eq, value: 10}, {metric: min_e_over_d, op: ge, value: 2.0}]
+  reference: {pin_d: 10.0, lug_w: 40.0}
+- id: lug-02
+  part: lug_fitting
+  text: "Increase the lug thickness to 10 mm."
+  feasible: true
+  allow_change: [lug_t]
+  accept: [{param: lug_t, op: eq, value: 10}]
+  reference: {lug_t: 10.0}
+- id: lug-03
+  part: lug_fitting
+  text: "Raise the pin centre to 45 mm above the base plate."
+  feasible: true
+  allow_change: [lug_h]
+  accept: [{param: lug_h, op: eq, value: 45}]
+  reference: {lug_h: 45.0}
+- id: lug-04
+  part: lug_fitting
+  text: "Reduce the lug fitting mass by at least 10 % by thinning the base plate. Keep all design rules."
+  feasible: true
+  allow_change: [base_t]
+  accept: [{metric: mass_g, op: rel_le, value: -0.10}]
+  reference: {base_t: 5.0}
+- id: lug-05
+  part: lug_fitting
+  text: "Use three base fasteners per side. The base plate may be widened."
+  feasible: true
+  allow_change: [n_bolts_per_side, base_w]
+  accept: [{param: n_bolts_per_side, op: eq, value: 3}, {metric: n_bolt, op: eq, value: 6}]
+  reference: {n_bolts_per_side: 3, base_w: 78.0}
+- id: lug-06
+  part: lug_fitting
+  text: "Increase the pin bore to 20 mm but keep the 36 mm lug width."
+  feasible: false
+  accept: [{param: pin_d, op: eq, value: 20}]
+  allow_change: [pin_d]
+  reason: "e/D would be 0.9, rule needs 2.0"
+- id: lug-07
+  part: lug_fitting
+  text: "Reduce the lug thickness to 3 mm."
+  feasible: false
+  accept: [{param: lug_t, op: eq, value: 3}]
+  allow_change: [lug_t]
+  reason: "min lug thickness rule is 4 mm"
+- id: lug-08
+  part: lug_fitting
+  text: "Change the base fastener holes to 5 mm diameter."
+  feasible: true
+  allow_change: [bolt_d]
+  accept: [{param: bolt_d, op: eq, value: 5.0}]
+  reference: {bolt_d: 5.0}
