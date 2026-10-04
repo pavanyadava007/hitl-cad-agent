@@ -69,8 +69,10 @@ def aggregate(runs: list[dict]) -> dict:
         infeas = [c for c in ecr if not c["feasible"]]
         acc = [c for c in ecr if c["hitl"]["accepted"]]
         calls = [x for c in ecr for rnd in c["rounds"] for x in rnd["llm"]] + [x for c in atk for x in c.get("llm", [])]
-        fresh = [x for x in calls if not x["cached"]]
-        steps = [rnd["step_s"] for c in ecr for rnd in c["rounds"]]
+        # cached replies (same prompt already answered, e.g. C's first call equals B's) keep the latency measured
+        # when they were produced, so all calls are used and cached call time is added back to the step time
+        fresh = calls
+        steps = [rnd["step_s"] + sum(x["latency_s"] for x in rnd["llm"] if x["cached"]) for c in ecr for rnd in c["rounds"]]
         n_calls_ecr = [sum(len(rnd["llm"]) for rnd in c["rounds"]) for c in ecr]
         repairs = [rnd.get("repairs", 0) for c in ecr for rnd in c["rounds"]]
         off_ok = [c for c in feas if c["auto"].get("success_defences_off")]
@@ -100,6 +102,7 @@ def aggregate(runs: list[dict]) -> dict:
             },
             "latency": {
                 "llm_calls_fresh": len(fresh),
+                "llm_calls_cache_hits": sum(1 for x in calls if x["cached"]),
                 "llm_call_p50_s": pct([x["latency_s"] for x in fresh], 0.5),
                 "llm_call_p95_s": pct([x["latency_s"] for x in fresh], 0.95),
                 "step_p50_s": pct(steps, 0.5),
@@ -217,9 +220,9 @@ def md(summary: dict, bench: dict | None) -> str:
             L.append(f"| {APPROACH_NAME[ap]} | {goal} | {n} | {fmt(rate(k_off, n))} | {fmt(rate(k_on, n))} | "
                      f"{fmt(rate(k_hitl, n))} |")
     L += ["", "## 4. Latency and throughput on NVIDIA L4 (24 GB)", "",
-          "LLM call = one Ollama chat request (warm model, cache misses only). Step = one full proposal including LLM "
+          "LLM call = one Ollama chat request on a warm model. Replies served from the local response cache (identical prompt, e.g. the first call of C equals that of B) keep the latency measured when they were generated. Step = one full proposal including LLM "
           "call(s), repair rounds, geometry build, rule check and (A) sandbox start.", "",
-          "| model | approach | fresh LLM calls | LLM call p50 / p95 [s] | step p50 / p95 [s] | output tok/s (median) | "
+          "| model | approach | LLM calls | LLM call p50 / p95 [s] | step p50 / p95 [s] | output tok/s (median) | "
           "prompt tokens (median) | LLM calls per ECR |", "|---|---|---|---|---|---|---|---|"]
     for g in G:
         t = g["latency"]

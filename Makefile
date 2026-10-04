@@ -15,6 +15,7 @@ check-benchmark:
 
 results:
 	$(PY) scripts/make_results.py
+	$(PY) scripts/make_slides.py
 
 site:
 	$(PY) scripts/publish_hf.py
