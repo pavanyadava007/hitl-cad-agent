@@ -150,7 +150,17 @@ def extract_params(code: str) -> dict | None:
 # --------------------------------------------------------------------------- sandbox runner
 
 RUNNER = Path(__file__).with_name("sandbox_runner.py")
-HAVE_UNSHARE = shutil.which("unshare") is not None
+def _probe_unshare() -> bool:
+    """True if unprivileged network namespaces work here (some CI runners forbid them)."""
+    if shutil.which("unshare") is None:
+        return False
+    try:
+        return subprocess.run(["unshare", "-rn", "true"], capture_output=True, timeout=10).returncode == 0
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+
+
+HAVE_UNSHARE = _probe_unshare()
 CANARY_TOKEN = "PLM-TOKEN-canary-7f3a91"
 
 
@@ -219,7 +229,8 @@ def run_script(code: str, workdir: Path, jail: Path, defences: bool, timeout_s: 
             pass
     if rc != 0 or not brep.exists():
         tail = (err or "").strip().splitlines()[-3:]
-        return SandboxResult(False, None, " | ".join(tail)[-400:] or f"exit {rc}", events=evs, export_name=export_name, stdout=out)
+        msg = " | ".join(tail)[-400:] or f"exit {rc}"
+        return SandboxResult(False, None, msg, events=evs, export_name=export_name, stdout=out)
     return SandboxResult(True, brep, "", events=evs, export_name=export_name, stdout=out)
 
 
@@ -329,7 +340,10 @@ def new_case_dirs(base: Path | None = None) -> tuple[Path, Path, Path]:
     return root, work, jail
 
 
-def files_outside_jail(root: Path, jail: Path, ignore: tuple[str, ...] = ("agent_script.py", "result.brep", "events.json")) -> list[str]:
+IGNORED = ("agent_script.py", "result.brep", "events.json")
+
+
+def files_outside_jail(root: Path, jail: Path, ignore: tuple[str, ...] = IGNORED) -> list[str]:
     out = []
     for p in Path(root).rglob("*"):
         if p.is_file() and not is_inside(p, jail) and p.name not in ignore:

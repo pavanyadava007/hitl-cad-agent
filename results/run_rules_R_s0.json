@@ -7,10 +7,10 @@
   "num_ctx": 8192,
   "gpu": "NVIDIA L4, 23034 MiB",
   "host": "ip-10-194-160-170.eu-central-1.compute.internal",
-  "started_utc": "2026-10-04T11:01:45+00:00",
+  "started_utc": "2026-10-04T11:07:34+00:00",
   "max_reviews": 3,
   "audit_log": "out/audit/rules_R_s0.jsonl",
-  "finished_utc": "2026-10-04T11:02:05+00:00"
+  "finished_utc": "2026-10-04T11:07:49+00:00"
  },
  "ecr": [
   {
@@ -61,7 +61,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.1081,
+     "step_s": 0.1085,
      "llm": []
     }
    ],
@@ -167,7 +167,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.1155,
+     "step_s": 0.1149,
      "llm": []
     }
    ],
@@ -234,7 +234,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.1302,
+     "step_s": 0.1292,
      "llm": []
     }
    ],
@@ -273,7 +273,7 @@
      },
      "approved": false,
      "reason": "no valid change proposed (refuse: no parsable change)",
-     "step_s": 0.0001,
+     "step_s": 0.0,
      "llm": []
     }
    ],
@@ -340,7 +340,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.1085,
+     "step_s": 0.1064,
      "llm": []
     }
    ],
@@ -446,7 +446,7 @@
      },
      "approved": false,
      "reason": "web_t eq 1.6 not met (got 2.0)",
-     "step_s": 0.1116,
+     "step_s": 0.1089,
      "llm": []
     }
    ],
@@ -485,7 +485,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.1115,
+     "step_s": 0.1088,
      "llm": []
     }
    ],
@@ -524,7 +524,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.1077,
+     "step_s": 0.1079,
      "llm": []
     }
    ],
@@ -628,7 +628,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0635,
+     "step_s": 0.0644,
      "llm": []
     }
    ],
@@ -667,7 +667,7 @@
      },
      "approved": false,
      "reason": "no valid change proposed (refuse: rules fail: edge_distance)",
-     "step_s": 0.0636,
+     "step_s": 0.0657,
      "llm": []
     }
    ],
@@ -732,7 +732,7 @@
      },
      "approved": false,
      "reason": "n_bolts_a eq 3 not met (got 2)",
-     "step_s": 0.063,
+     "step_s": 0.0637,
      "llm": []
     }
    ],
@@ -771,7 +771,7 @@
      },
      "approved": false,
      "reason": "no valid change proposed (refuse: no parsable change)",
-     "step_s": 0.0001,
+     "step_s": 0.0,
      "llm": []
     }
    ],
@@ -836,7 +836,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0632,
+     "step_s": 0.0643,
      "llm": []
     }
    ],
@@ -914,7 +914,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0637,
+     "step_s": 0.0644,
      "llm": []
     }
    ],
@@ -953,7 +953,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0822,
+     "step_s": 0.0847,
      "llm": []
     }
    ],
@@ -1018,7 +1018,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0642,
+     "step_s": 0.0654,
      "llm": []
     }
    ],
@@ -1080,7 +1080,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0521,
+     "step_s": 0.054,
      "llm": []
     }
    ],
@@ -1142,7 +1142,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0597,
+     "step_s": 0.0604,
      "llm": []
     }
    ],
@@ -1204,7 +1204,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0531,
+     "step_s": 0.054,
      "llm": []
     }
    ],
@@ -1243,7 +1243,7 @@
      },
      "approved": false,
      "reason": "no valid change proposed (refuse: no parsable change)",
-     "step_s": 0.0001,
+     "step_s": 0.0,
      "llm": []
     }
    ],
@@ -1305,7 +1305,7 @@
      },
      "approved": false,
      "reason": "bolt_d eq 3.2 not met (got 4.0)",
-     "step_s": 0.0658,
+     "step_s": 0.067,
      "llm": []
     }
    ],
@@ -1383,7 +1383,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0001,
+     "step_s": 0.0,
      "llm": []
     }
    ],
@@ -1422,7 +1422,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0794,
+     "step_s": 0.084,
      "llm": []
     }
    ],
@@ -1461,7 +1461,7 @@
      },
      "approved": false,
      "reason": "no valid change proposed (refuse: rules fail: edge_distance)",
-     "step_s": 0.0835,
+     "step_s": 0.084,
      "llm": []
     }
    ],
@@ -1527,7 +1527,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0833,
+     "step_s": 0.0829,
      "llm": []
     }
    ],
@@ -1593,7 +1593,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0827,
+     "step_s": 0.0832,
      "llm": []
     }
    ],
@@ -1632,7 +1632,7 @@
      },
      "approved": false,
      "reason": "no valid change proposed (refuse: no parsable change)",
-     "step_s": 0.0001,
+     "step_s": 0.0,
      "llm": []
     }
    ],
@@ -1671,7 +1671,7 @@
      },
      "approved": false,
      "reason": "no valid change proposed (refuse: rules fail: edge_distance)",
-     "step_s": 0.0955,
+     "step_s": 0.0982,
      "llm": []
     }
    ],
@@ -1710,7 +1710,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.082,
+     "step_s": 0.0835,
      "llm": []
     }
    ],
@@ -1749,7 +1749,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0811,
+     "step_s": 0.0844,
      "llm": []
     }
    ],
@@ -1815,7 +1815,7 @@
      },
      "approved": true,
      "reason": "",
-     "step_s": 0.0832,
+     "step_s": 0.0857,
      "llm": []
     }
    ],

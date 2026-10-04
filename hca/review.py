@@ -79,7 +79,8 @@ def interactive(part_name: str, text: str, model: str, approach: str = "C", out_
                 audit.append("merge", round=rnd, export=exp, edited=True)
                 print("approved, exported", exp["step"])
                 return {"approved": True, "rounds": rnd + 1, "edited": True}
-            msgs.append({"role": "user", "content": reviewer_message(approach, f"I changed {key} to {val}; continue from there.")})
+            note = f"I changed {key} to {val}; continue from there."
+            msgs.append({"role": "user", "content": reviewer_message(approach, note)})
             continue
         if ans.startswith("q"):
             audit.append("review", round=rnd, approved=False, reason="quit", reviewer="human")

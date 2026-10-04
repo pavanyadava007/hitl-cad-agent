@@ -14,7 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from hca.benchmark import load_ecrs, judge  # noqa: E402
+from hca.benchmark import judge, load_ecrs  # noqa: E402
 from hca.geometry import analyze  # noqa: E402
 from hca.parts import get_part  # noqa: E402
 from hca.pipeline import evaluate_params  # noqa: E402

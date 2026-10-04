@@ -52,7 +52,7 @@ def check(part: PartType, params: Strict | dict, geo: GeometryReport) -> list[Ru
                           "geometry must be one valid solid"))
     res.append(RuleResult("mass", geo.mass_g <= lim["max_mass_g"], geo.mass_g, lim["max_mass_g"], "mass [g]"))
     env = lim["envelope_mm"]
-    over = [round(b - e, 3) for b, e in zip(geo.bbox, env) if b > e + 1e-6]
+    over = [round(b - e, 3) for b, e in zip(geo.bbox, env, strict=True) if b > e + 1e-6]
     res.append(RuleResult("envelope", not over, "x".join(f"{b:.1f}" for b in geo.bbox), "x".join(f"{e:g}" for e in env),
                           "bounding box [mm]"))
     eod = geo.min_e_over_d()
