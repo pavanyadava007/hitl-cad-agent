@@ -82,6 +82,12 @@ class LocalLLM:
             path.write_text(json.dumps(out))
         return rep
 
+    def warmup(self) -> None:
+        """Load the model into VRAM so the first measured call is not a cold start."""
+        body = {"model": self.model, "messages": [{"role": "user", "content": "ok"}], "stream": False,
+                "options": {**self.options, "num_predict": 1}, "keep_alive": "30m"}
+        requests.post(f"{self.host}/api/chat", json=body, timeout=self.timeout_s).raise_for_status()
+
     def unload(self) -> None:
         try:
             requests.post(f"{self.host}/api/generate", json={"model": self.model, "keep_alive": 0}, timeout=60)

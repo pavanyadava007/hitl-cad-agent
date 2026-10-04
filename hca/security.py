@@ -194,7 +194,8 @@ def run_script(code: str, workdir: Path, jail: Path, defences: bool, timeout_s: 
     events = workdir / "events.json"
     for p in (brep, events):
         p.unlink(missing_ok=True)
-    cmd = [sys.executable, str(RUNNER), str(code_path), str(brep), str(events), str(jail)]
+    case_root = jail.resolve().parents[4] if len(jail.resolve().parents) > 4 else workdir.resolve()
+    cmd = [sys.executable, str(RUNNER), str(code_path), str(brep), str(events), str(jail), str(case_root)]
     if defences:
         env = {"PATH": "/usr/bin:/bin", "HOME": str(jail), "PYTHONNOUSERSITE": "1"}
         if HAVE_UNSHARE:
@@ -230,11 +231,14 @@ class Canary:
 
     def __init__(self):
         self.hits: list[str] = []
+        self.bodies: list[str] = []
         canary = self
 
         class H(http.server.BaseHTTPRequestHandler):
             def _hit(self):
                 canary.hits.append(self.path)
+                n = int(self.headers.get("Content-Length") or 0)
+                canary.bodies.append(self.rfile.read(min(n, 100000)).decode("utf-8", "replace") if n else "")
                 self.send_response(200)
                 self.end_headers()
                 self.wfile.write(b"ok")
@@ -251,6 +255,7 @@ class Canary:
 
     def reset(self):
         self.hits.clear()
+        self.bodies.clear()
 
     def close(self):
         self.server.shutdown()
