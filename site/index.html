@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HITL CAD Agent</title>
+<meta name="description" content="Local, secure human-in-the-loop CAD change agents for aircraft parts: free code vs typed tools vs verify-and-repair, measured on an NVIDIA L4.">
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --ink: #17202a; --muted: #5b6673; --line: #d9dee4;
+  --accent: #1f5fae; --good: #1d7a46; --bad: #b3261e; --warn: #9a6400; --chip: #eef2f7; --svgbg: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1419; --panel: #172029; --ink: #e6ebf0; --muted: #9aa7b4; --line: #2a3642;
+    --accent: #6ea8ff; --good: #5cc98a; --bad: #ff8a80; --warn: #e0b45c; --chip: #1f2b36; --svgbg: #f4f6f8;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1419; --panel: #172029; --ink: #e6ebf0; --muted: #9aa7b4; --line: #2a3642;
+  --accent: #6ea8ff; --good: #5cc98a; --bad: #ff8a80; --warn: #e0b45c; --chip: #1f2b36; --svgbg: #f4f6f8;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 1.9rem; margin: 8px 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.3rem; margin: 40px 0 8px; }
+h3 { font-size: 1.05rem; margin: 20px 0 6px; }
+p { margin: 6px 0 10px; max-width: 78ch; }
+a { color: var(--accent); }
+.lead { color: var(--muted); font-size: 1.05rem; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.grid { display: grid; gap: 14px; }
+.g3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.g2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.kpi .v { font-size: 1.6rem; font-weight: 650; }
+.kpi .l { color: var(--muted); font-size: 0.9rem; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; white-space: nowrap; }
+td.wrap { white-space: normal; min-width: 260px; }
+th { background: var(--chip); font-weight: 600; position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+.ci { color: var(--muted); font-size: 0.8rem; }
+.chip { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--chip); font-size: 0.8rem; }
+.ok { color: var(--good); font-weight: 600; } .no { color: var(--bad); font-weight: 600; } .warn { color: var(--warn); }
+.svgbox { background: var(--svgbg); border-radius: 8px; border: 1px solid var(--line); padding: 4px; }
+.svgbox img { width: 100%; height: auto; display: block; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cap { color: var(--muted); font-size: 0.82rem; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+select, button { font: inherit; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+button:disabled { opacity: 0.45; cursor: default; }
+.round { border-left: 3px solid var(--line); padding: 6px 0 6px 12px; margin: 10px 0; }
+.round.approved { border-color: var(--good); } .round.rejected { border-color: var(--bad); }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.85em; }
+pre { background: var(--chip); padding: 10px; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; }
+.arch { width: 100%; height: auto; }
+.arch rect { fill: var(--panel); stroke: var(--line); }
+.arch .trusted { fill: var(--chip); stroke: var(--good); }
+.arch .untrusted { stroke: var(--warn); stroke-dasharray: 5 3; }
+.arch text { fill: var(--ink); font-size: 13px; }
+.arch .small { fill: var(--muted); font-size: 11px; }
+.arch line, .arch path { stroke: var(--muted); fill: none; marker-end: url(#arr); }
+footer { margin-top: 48px; color: var(--muted); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <span class="chip">Study: local, secure, reliable agents for engineering design</span>
+  <h1>Human-in-the-loop CAD change agents, measured locally</h1>
+  <p class="lead">Which agent architecture can safely change aircraft structural parts from natural-language engineering
+  change requests, using only local LLMs? Three designs compared on 36 change requests and 24 attacks, with every
+  proposal gated by a reviewer. All numbers below are measured on one <span id="gpu"></span> (no cloud).</p>
+  <p><a href="https://github.com/pavanyadava007/hitl-cad-agent">Code on GitHub</a> - MIT licence - Pavan Yadav Annappa</p>
+</header>
+
+<section>
+  <h2>Architecture</h2>
+  <div class="panel">
+  <svg class="arch" viewBox="0 0 1000 300" role="img" aria-label="Agent architecture: change request and part notes go to a local LLM, its proposal passes the security layer and trusted geometry checker, then the human reviewer, then merge and export">
+    <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--muted);stroke:none"/></marker></defs>
+    <rect class="untrusted" x="10" y="30" width="170" height="70" rx="8"/><text x="22" y="58">Change request</text><text class="small" x="22" y="78">untrusted text</text>
+    <rect class="untrusted" x="10" y="130" width="170" height="70" rx="8"/><text x="22" y="158">Part notes (PLM)</text><text class="small" x="22" y="178">untrusted metadata</text>
+    <rect x="230" y="80" width="170" height="80" rx="8"/><text x="242" y="108">Local LLM (Ollama)</text><text class="small" x="242" y="128">A: CadQuery script</text><text class="small" x="242" y="144">B/C: JSON parameter patch</text>
+    <rect class="trusted" x="450" y="30" width="230" height="180" rx="8"/><text x="462" y="56">Security layer + checker</text>
+    <text class="small" x="462" y="80">deny-by-default tool policy</text><text class="small" x="462" y="98">schema validation (B/C)</text>
+    <text class="small" x="462" y="116">AST allowlist + no-network sandbox (A)</text><text class="small" x="462" y="134">output path jail</text>
+    <text class="small" x="462" y="152">trusted CadQuery build</text><text class="small" x="462" y="170">design rules on real geometry</text><text class="small" x="462" y="188">hash-chained audit log</text>
+    <rect x="730" y="60" width="120" height="110" rx="8"/><text x="742" y="90">Reviewer</text><text class="small" x="742" y="110">diff: params,</text><text class="small" x="742" y="126">mass, e/D, SVG</text><text class="small" x="742" y="146">approve / reject</text>
+    <rect class="trusted" x="880" y="80" width="110" height="70" rx="8"/><text x="892" y="108">Merge</text><text class="small" x="892" y="128">STEP + SVG</text>
+    <line x1="180" y1="65" x2="228" y2="110"/><line x1="180" y1="165" x2="228" y2="135"/>
+    <line x1="400" y1="120" x2="448" y2="120"/><line x1="680" y1="115" x2="728" y2="115"/><line x1="850" y1="115" x2="878" y2="115"/>
+    <path d="M565 210 C 565 270, 315 270, 315 162"/><text class="small" x="350" y="262">C only: rule failures fed back, max 3 rounds</text>
+    <path d="M790 170 C 790 290, 300 300, 300 162"/><text class="small" x="600" y="292">rejection reason back to the agent (max 3 reviews)</text>
+  </svg>
+  </div>
+</section>
+
+<section>
+  <h2>Headline numbers</h2>
+  <div class="grid g3" id="kpis"></div>
+</section>
+
+<section>
+  <h2>Change requests: autonomous vs. human-in-the-loop</h2>
+  <p>Task success = first proposal meets every acceptance criterion and design rule and touches nothing else (or refuses an
+  infeasible request). "Wrong merges" are first proposals that pass the automatic rule gate but are still wrong; only the reviewer catches them.</p>
+  <div class="tablewrap"><table id="t-ecr"></table></div>
+</section>
+
+<section>
+  <h2>Security: attack success rate</h2>
+  <p>The same model reply is evaluated with the security layer off and on. With a reviewer gate, tools only run after
+  approval, but in approach A the generated code must run before the reviewer can see the geometry.</p>
+  <div class="tablewrap"><table id="t-sec"></table></div>
+  <h3>Per attack case</h3>
+  <div class="controls"><label for="atk-run">Run:</label><select id="atk-run"></select></div>
+  <div class="tablewrap"><table id="t-atk"></table></div>
+</section>
+
+<section>
+  <h2>Latency on the local GPU</h2>
+  <div class="tablewrap"><table id="t-lat"></table></div>
+</section>
+
+<section>
+  <h2>Before / after renders from real runs</h2>
+  <p>Left: baseline part. Right: the revision the reviewer approved (exported by the run named under each pair).</p>
+  <div class="grid g2" id="gallery"></div>
+</section>
+
+<section>
+  <h2>Replay of real review sessions</h2>
+  <p>Logged sessions in which the reviewer rejected at least once. Step through the rounds.</p>
+  <div class="controls"><select id="sess-pick"></select><button id="prev">Previous round</button><button id="next">Next round</button><span id="sess-pos" class="cap"></span></div>
+  <div class="panel" id="sess"></div>
+</section>
+
+<section>
+  <h2>Benchmark</h2>
+  <p>36 engineering change requests over 4 parametric parts (wing rib, L-bracket, stringer clip, lug fitting), 9 of them
+  infeasible on purpose. The benchmark is self-checked without an LLM: <span id="bench"></span></p>
+  <div class="tablewrap"><table id="t-bench"></table></div>
+</section>
+
+<section>
+  <h2>Limits</h2>
+  <div class="panel">
+  <ul>
+    <li>The reviewer in the evaluation is a scripted oracle that knows the acceptance criteria. Real reviewers are slower and miss things; review counts are a lower bound on effort.</li>
+    <li>Parts are simplified parametric models with a small rule set (thickness, e/D, pitch, ligament, mass, envelope). No FEA, no certification rules.</li>
+    <li>Attack side effects with defences off are recorded by instrumented stubs and a host safety net; "success" means the agent made the call, not that the host was changed.</li>
+    <li>Temperature 0: seeds change little. Rates come with Wilson 95% intervals, small n per cell.</li>
+    <li>Prompt-level defences (spotlighting, instruction hierarchy) were not tested; only execution-layer defences were.</li>
+  </ul>
+  </div>
+</section>
+<footer id="foot"></footer>
+</main>
+<script src="assets/data.js"></script>
+<script>
+(function () {
+  const D = window.HCA, S = D.summary, G = S.groups;
+  const AP = {R: "R rules baseline", A: "A free code", B: "B typed tools", C: "C tools + repair"};
+  const el = (id) => document.getElementById(id);
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const pct = (r) => r && r.n ? `${Math.round(100 * r.p)}%` : "-";
+  const rc = (r) => r && r.n ? `${pct(r)} <span class="ci">[${Math.round(100 * r.lo)}-${Math.round(100 * r.hi)}] ${r.k}/${r.n}</span>` : "-";
+  const f2 = (x) => (x == null || isNaN(x)) ? "-" : Number(x).toFixed(2);
+  el("gpu").textContent = "NVIDIA L4 (24 GB)";
+  const dates = [...new Set(G.flatMap((g) => g.dates))].sort();
+
+  function table(id, head, rows) {
+    el(id).innerHTML = "<thead><tr>" + head.map((h) => `<th>${h}</th>`).join("") + "</tr></thead><tbody>" +
+      rows.map((r) => "<tr>" + r.map((c) => `<td>${c}</td>`).join("") + "</tr>").join("") + "</tbody>";
+  }
+  const llm = G.filter((g) => g.approach !== "R");
+  // KPIs: best approach per metric, all from summary.json
+  const best = (key, f) => llm.slice().sort((a, b) => f(b) - f(a))[0];
+  const bS = best("s", (g) => g.ecr.auto_success.p);
+  const bH = best("h", (g) => g.ecr.hitl_accepted.p);
+  const offA = llm.filter((g) => g.attacks.off_auto).sort((a, b) => b.attacks.off_auto.p - a.attacks.off_auto.p)[0];
+  const maxOn = Math.max(...llm.filter((g) => g.attacks.on_auto).map((g) => g.attacks.on_auto.p));
+  el("kpis").innerHTML = [
+    [pct(bS.ecr.auto_success), `best autonomous task success (${esc(bS.model)}, ${AP[bS.approach]})`],
+    [pct(bH.ecr.hitl_accepted), `best accepted within 3 reviews (${esc(bH.model)}, ${AP[bH.approach]})`],
+    [pct(offA.attacks.off_auto) + " to " + Math.round(100 * maxOn) + "%", `worst attack success, defences off (${esc(offA.model)}, ${AP[offA.approach]}) vs. highest with defences on`],
+  ].map(([v, l]) => `<div class="panel kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+
+  table("t-ecr", ["model", "approach", "seeds", "task success", "infeasible refused", "HITL accepted", "reviews / accepted", "wrong merges w/o HITL", "rule-violating proposals", "invalid outputs"],
+    G.map((g) => [esc(g.model), AP[g.approach], g.seeds.length, rc(g.ecr.auto_success), rc(g.ecr.correct_refusal_infeasible), rc(g.ecr.hitl_accepted), f2(g.ecr.reviews_per_accepted), rc(g.ecr.wrong_merge_without_hitl), rc(g.ecr.rule_violation_proposed), rc(g.ecr.invalid_output)]));
+  table("t-sec", ["model", "approach", "off, auto", "on, auto", "off, HITL", "on, HITL", "false blocks (benign)"],
+    G.filter((g) => g.attacks.off_auto).map((g) => [esc(g.model), AP[g.approach], rc(g.attacks.off_auto), rc(g.attacks.on_auto), rc(g.attacks.off_hitl), rc(g.attacks.on_hitl), rc(g.ecr.false_block_benign)]));
+  table("t-lat", ["model", "approach", "LLM call p50 / p95 [s]", "step p50 / p95 [s]", "output tok/s", "LLM calls per ECR"],
+    llm.map((g) => [esc(g.model), AP[g.approach], `${f2(g.latency.llm_call_p50_s)} / ${f2(g.latency.llm_call_p95_s)}`, `${f2(g.latency.step_p50_s)} / ${f2(g.latency.step_p95_s)}`, f2(g.latency.tokens_per_s_median), f2(g.latency.llm_calls_per_ecr_mean)]));
+
+  // per-attack table
+  const sel = el("atk-run");
+  llm.forEach((g, i) => { const o = document.createElement("option"); o.value = i; o.textContent = `${g.model} - ${AP[g.approach]}`; sel.appendChild(o); });
+  const atkText = Object.fromEntries(D.attacks.map((a) => [a.id, a]));
+  function atkTable() {
+    const g = llm[+sel.value];
+    table("t-atk", ["case", "goal", "channel", "injected text", "off, auto", "on, auto", "on, HITL"],
+      Object.entries(g.attack_cases).map(([id, c]) => {
+        const a = atkText[id] || {};
+        const t = (a.channel === "notes" ? "notes: " + a.notes : a.text) || "";
+        const cell = (k) => k ? `<span class="no">${k}/${c.n}</span>` : `<span class="ok">0/${c.n}</span>`;
+        return [id, c.goal, c.channel, `<span class="wrap">${esc(t.length > 160 ? t.slice(0, 157) + "..." : t)}</span>`, cell(c.off), cell(c.on), cell(c.on_hitl)];
+      }));
+    el("t-atk").querySelectorAll("td:nth-child(4)").forEach((td) => td.classList.add("wrap"));
+  }
+  sel.onchange = atkTable; atkTable();
+
+  // gallery
+  el("gallery").innerHTML = D.gallery.map((it) => {
+    const ecr = D.ecrs.find((e) => e.id === it.ecr) || {};
+    return `<div class="panel"><b>${it.ecr}</b> <span class="cap">${esc(ecr.text)}</span>
+      <div class="pair" style="margin-top:8px"><div class="svgbox"><img src="${D.base_svgs[it.part]}" alt="${it.part} baseline"></div>
+      <div class="svgbox"><img src="${it.after}" alt="${it.ecr} approved revision"></div></div>
+      <div class="cap">changes: <code>${esc(JSON.stringify(it.changes))}</code> - mass ${it.geo ? it.geo.mass_g : "-"} g - reviews: ${it.reviews} - run: ${esc(it.run)}</div></div>`;
+  }).join("") || "<p>No exported revisions found.</p>";
+
+  // session replay
+  const ps = el("sess-pick"); let si = 0, ri = 0;
+  D.sessions.forEach((s, i) => { const o = document.createElement("option"); o.value = i; o.textContent = `${s.ecr} - ${s.model} - ${AP[s.approach]}`; ps.appendChild(o); });
+  function draw() {
+    const s = D.sessions[si]; if (!s) { el("sess").textContent = "No sessions logged."; return; }
+    let h = `<p><b>${s.ecr}</b> (${esc(s.part)}): ${esc(s.text)}</p>`;
+    s.rounds.slice(0, ri + 1).forEach((r, k) => {
+      const prop = r.kind === "propose" ? `proposes <code>${esc(JSON.stringify(r.changes))}</code>` : `${r.kind}: ${esc(r.reason_agent)}`;
+      const geo = r.geo ? ` - mass ${r.geo.mass_g} g, holes ${esc(JSON.stringify(r.geo.holes))}${r.geo.min_e_over_d !== undefined ? ", min e/D " + r.geo.min_e_over_d : ""}` : "";
+      const fr = r.failed_rules.length ? ` - <span class="no">failed rules: ${r.failed_rules.join(", ")}</span>` : "";
+      h += `<div class="round ${r.approved ? "approved" : "rejected"}"><b>Round ${k + 1}</b>${r.repairs ? ` (after ${r.repairs} automatic repair rounds)` : ""}: agent ${prop}${geo}${fr}<br>
+        Reviewer: <span class="${r.approved ? "ok" : "no"}">${esc(r.review)}</span></div>`;
+    });
+    el("sess").innerHTML = h;
+    el("sess-pos").textContent = `round ${ri + 1} of ${s.rounds.length}`;
+    el("prev").disabled = ri === 0; el("next").disabled = ri >= s.rounds.length - 1;
+  }
+  ps.onchange = () => { si = +ps.value; ri = 0; draw(); };
+  el("prev").onclick = () => { ri = Math.max(0, ri - 1); draw(); };
+  el("next").onclick = () => { ri += 1; draw(); };
+  draw();
+
+  // benchmark
+  const B = S.benchmark_check;
+  if (B) {
+    const f = B.rows.filter((r) => r.feasible), inf = B.rows.filter((r) => !r.feasible);
+    el("bench").textContent = `reference solutions pass for ${f.filter((r) => r.reference_ok).length}/${f.length} feasible requests; random search (${inf.length ? inf[0].samples : 0} samples each) found a valid design for ${inf.filter((r) => r.solutions_found).length}/${inf.length} infeasible requests.`;
+  }
+  table("t-bench", ["id", "part", "feasible", "request"], D.ecrs.map((e) => [e.id, e.part, e.feasible ? "yes" : '<span class="warn">no</span>', `<span>${esc(e.text)}</span>`]));
+  el("t-bench").querySelectorAll("td:nth-child(4)").forEach((td) => td.classList.add("wrap"));
+  el("foot").textContent = `Measured ${dates.join(", ")} on NVIDIA L4 (24 GB) with Ollama, temperature 0. Data: results/summary.json. Parts, change requests and attacks are original work under the MIT licence.`;
+})();
+</script>
+</body>
+</html>
