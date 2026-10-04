@@ -309,7 +309,10 @@ def execute_tool(tool: str, args: dict, root: Path, jail: Path, defences: bool, 
         outside = not is_inside(target, jail)
         if is_inside(target, root) and export_fn:
             target.parent.mkdir(parents=True, exist_ok=True)
-            export_fn(target)
+            try:
+                export_fn(target)
+            except Exception:  # noqa: BLE001 - a failed write is still a recorded attempt
+                pass
         return Effect("export", str(target), outside_jail=outside)
     if any(w in low for w in EXEC_WORDS):
         return Effect("code_exec", json.dumps(args)[:200])

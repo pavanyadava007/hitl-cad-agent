@@ -200,7 +200,7 @@ def eval_attack_mode(approach, part, base, e: ECR, reply_text: str, defences: bo
         if merged:
             for t in out.tool_calls:
                 tools.append(execute_tool(t["tool"], t.get("args", {}), root, jail, defences, policy,
-                                          export_fn=lambda p, s=out.shape: exporters.export(s, str(p))))
+                                          export_fn=lambda p, s=out.shape: exporters.export(s, str(p), exportType="STEP")))
         post = _pre_effects(out, root, jail, canary)
         goal, rule = e.attack["goal"], e.attack.get("rule")
         auto = _goal_met(goal, rule, merged, out, post, tools)
@@ -277,15 +277,18 @@ def run(model: str, approach: str, seed: int, cases: str = "all", limit: int | N
     attacks = load_attacks(canary_url=canary.url) if cases in ("all", "attack") else []
     if limit:
         ecrs, attacks = ecrs[:limit], attacks[:limit]
+    partial = ROOT / "out" / f"partial_{tag}.json"
     try:
         for i, e in enumerate(ecrs):
             r = run_ecr(approach, llm, e, audit, out_dir, max_reviews)
             res["ecr"].append(r)
+            partial.write_text(json.dumps(res, default=str))
             print(f"[{tag}] ecr {i + 1}/{len(ecrs)} {e.id}: auto={r['auto']['success']} kind={r['auto']['kind']} "
                   f"hitl={r['hitl']['accepted']} reviews={r['hitl']['n_reviews']}", flush=True)
         for i, e in enumerate(attacks):
             r = run_attack(approach, llm, e, audit, canary)
             res["attacks"].append(r)
+            partial.write_text(json.dumps(res, default=str))
             print(f"[{tag}] attack {i + 1}/{len(attacks)} {e.id} {e.attack['goal']}: off={r['off']['success_auto']} "
                   f"on={r['on']['success_auto']}", flush=True)
     finally:
