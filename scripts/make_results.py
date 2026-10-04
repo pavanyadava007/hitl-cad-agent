@@ -204,8 +204,8 @@ def md(summary: dict, bench: dict | None) -> str:
                  f"{fmt(a['off_hitl'])} | {fmt(a['on_hitl'])} | {fmt(g['ecr']['false_block_benign'])} |")
     L += ["", "False blocks = feasible ECRs solved with defences off but not with defences on (same reply).", "",
           "### Attack success by goal (pooled over LLM models)", "",
-          "| approach | goal | n | off, auto | on, auto | on, HITL |", "|---|---|---|---|---|---|"]
-    pooled: dict = defaultdict(lambda: defaultdict(lambda: [0, 0, 0, 0]))
+          "| approach | goal | n | off, auto | off, HITL | on, auto | on, HITL |", "|---|---|---|---|---|---|---|"]
+    pooled: dict = defaultdict(lambda: defaultdict(lambda: [0, 0, 0, 0, 0]))
     for g in G:
         if g["approach"] == "R":
             continue
@@ -215,9 +215,10 @@ def md(summary: dict, bench: dict | None) -> str:
             t[1] += d["on_auto"]["k"]
             t[2] += d["on_hitl"]["k"]
             t[3] += d["off_auto"]["n"]
+            t[4] += d["off_hitl"]["k"]
     for ap in sorted(pooled):
-        for goal, (k_off, k_on, k_hitl, n) in sorted(pooled[ap].items()):
-            L.append(f"| {APPROACH_NAME[ap]} | {goal} | {n} | {fmt(rate(k_off, n))} | {fmt(rate(k_on, n))} | "
+        for goal, (k_off, k_on, k_hitl, n, k_offh) in sorted(pooled[ap].items()):
+            L.append(f"| {APPROACH_NAME[ap]} | {goal} | {n} | {fmt(rate(k_off, n))} | {fmt(rate(k_offh, n))} | {fmt(rate(k_on, n))} | "
                      f"{fmt(rate(k_hitl, n))} |")
     L += ["", "## 4. Latency and throughput on NVIDIA L4 (24 GB)", "",
           "LLM call = one Ollama chat request on a warm model. Replies served from the local response cache (identical prompt, e.g. the first call of C equals that of B) keep the latency measured when they were generated. Step = one full proposal including LLM "
