@@ -4,253 +4,253 @@
    "id": "rib-01",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "rib-02",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 33
+   "samples": 300,
+   "solutions_found": 57
   },
   {
    "id": "rib-03",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "rib-04",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "rib-05",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "rib-06",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "rib-07",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 40
+   "samples": 300,
+   "solutions_found": 65
   },
   {
    "id": "rib-08",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "rib-09",
    "feasible": false,
    "reference_ok": null,
-   "samples": 150,
+   "samples": 300,
    "solutions_found": 0
   },
   {
    "id": "rib-10",
    "feasible": false,
    "reference_ok": null,
-   "samples": 150,
+   "samples": 300,
    "solutions_found": 0
   },
   {
    "id": "rib-11",
    "feasible": false,
    "reference_ok": null,
-   "samples": 150,
+   "samples": 300,
    "solutions_found": 0
   },
   {
    "id": "brk-01",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "brk-02",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 6
+   "samples": 300,
+   "solutions_found": 19
   },
   {
    "id": "brk-03",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "brk-04",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 10
+   "samples": 300,
+   "solutions_found": 34
   },
   {
    "id": "brk-05",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "brk-06",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 2
+   "samples": 300,
+   "solutions_found": 6
   },
   {
    "id": "brk-07",
    "feasible": false,
    "reference_ok": null,
-   "samples": 150,
+   "samples": 300,
    "solutions_found": 0
   },
   {
    "id": "brk-08",
    "feasible": false,
    "reference_ok": null,
-   "samples": 150,
+   "samples": 300,
    "solutions_found": 0
   },
   {
    "id": "brk-09",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "clp-01",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "clp-02",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "clp-03",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "clp-04",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 4
+   "samples": 300,
+   "solutions_found": 19
   },
   {
    "id": "clp-05",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "clp-06",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "clp-07",
    "feasible": false,
    "reference_ok": null,
-   "samples": 150,
+   "samples": 300,
    "solutions_found": 0
   },
   {
    "id": "clp-08",
    "feasible": false,
    "reference_ok": null,
-   "samples": 150,
+   "samples": 300,
    "solutions_found": 0
   },
   {
    "id": "lug-01",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 30
+   "samples": 300,
+   "solutions_found": 69
   },
   {
    "id": "lug-02",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "lug-03",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   },
   {
    "id": "lug-04",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 18
+   "samples": 300,
+   "solutions_found": 35
   },
   {
    "id": "lug-05",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 17
+   "samples": 300,
+   "solutions_found": 15
   },
   {
    "id": "lug-06",
    "feasible": false,
    "reference_ok": null,
-   "samples": 150,
+   "samples": 300,
    "solutions_found": 0
   },
   {
    "id": "lug-07",
    "feasible": false,
    "reference_ok": null,
-   "samples": 150,
+   "samples": 300,
    "solutions_found": 0
   },
   {
    "id": "lug-08",
    "feasible": true,
    "reference_ok": true,
-   "samples": 150,
-   "solutions_found": 150
+   "samples": 300,
+   "solutions_found": 300
   }
  ],
  "problems": []

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import html
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -16,11 +17,15 @@ AP = {"R": "R rules", "A": "A free code", "B": "B typed tools", "C": "C tools + 
 
 
 def pct(r: dict) -> str:
-    return "-" if not r or not r["n"] else f"{100 * r['p']:.0f}%"
+    return "-" if not r or not r["n"] else f"{_r(r['p'])}%"
+
+
+def _r(x: float) -> int:
+    return math.floor(100 * x + 0.5 + 1e-9)
 
 
 def ci(r: dict) -> str:
-    return "" if not r or not r["n"] else f"<span class=ci>[{100 * r['lo']:.0f}-{100 * r['hi']:.0f}] {r['k']}/{r['n']}</span>"
+    return "" if not r or not r["n"] else f"<span class=ci>[{_r(r['lo'])}-{_r(r['hi'])}] {r['k']}/{r['n']}</span>"
 
 
 def table(head: list[str], rows: list[list[str]]) -> str:

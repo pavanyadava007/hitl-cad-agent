@@ -1,4 +1,4 @@
-"""Evaluation harness: ECR benchmark with HITL oracle + attack set with defences off/on."""
+"""Evaluation runner: ECR benchmark with HITL oracle + attack set with defences off/on."""
 
 from __future__ import annotations
 

@@ -1,0 +1,30 @@
+# hca review session (scripted reviewer input piped on stdin, qwen2.5-coder:7b, approach C, NVIDIA L4, 2026-10-04)
+# input: r / 'Width must stay at 26 mm or more ...' / a
+
+=== proposal 1 (C, qwen2.5-coder:7b, 38.6 s) ===
+  parameter            before      after
+  leg_a                   50.0       50.0
+  leg_b                   40.0       40.0
+  width                   30.0       30.0
+  thickness                3.0        2.5  *
+  inner_fillet             3.0        3.0
+  bolt_d                   4.8        4.8
+  n_bolts_a                  2          2
+  n_bolts_b                  2          2
+  edge_dist               10.0       10.0
+  bolt_pitch              20.0       20.0
+  mass [g]              21.555     18.095  (-3.46 g, -16.1%)
+  min e/D                2.083      2.083
+  holes              {'bolt': 4}  ->  {'bolt': 4}
+  [PASS] solid: valid=True, solids=1 (limit valid, 1 solid)
+  [PASS] mass: 18.094957792890927 (limit 40.0)
+  [PASS] envelope: 50.0x30.0x40.0 (limit 120x60x120)
+  [PASS] edge_distance: 2.0833333333333335 (limit 2.0)
+  [PASS] pitch: 4.166666666666667 (limit 3.0)
+  [PASS] hole_count: {'bolt': 4} (limit {'bolt': 4}, bolts>=2)
+  [PASS] min_thickness_thickness: 2.5 (limit 1.6)
+  preview: out/review/candidate1.svg
+[a]pprove / [r]eject with comment / [e]dit value / [q]uit > comment for the agent > 
+=== proposal 2 (C, qwen2.5-coder:7b, 3.2 s) ===
+  agent result: REFUSE  The proposed changes would result in an edge distance of 1.0416666666666667 mm, which is below the minimum required limit of 2.0 mm.
+[a]pprove / [r]eject with comment / [e]dit value / [q]uit > 

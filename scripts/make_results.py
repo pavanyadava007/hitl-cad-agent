@@ -36,7 +36,12 @@ def rate(k: int, n: int) -> dict:
 def fmt(r: dict) -> str:
     if r["n"] == 0:
         return "-"
-    return f"{100 * r['p']:.0f}% [{100 * r['lo']:.0f}-{100 * r['hi']:.0f}] ({r['k']}/{r['n']})"
+    return f"{_r(r['p'])}% [{_r(r['lo'])}-{_r(r['hi'])}] ({r['k']}/{r['n']})"
+
+
+def _r(x: float) -> int:
+    """Percent rounded half up (same as Math.round on the site)."""
+    return math.floor(100 * x + 0.5 + 1e-9)
 
 
 def pct(xs: list[float], q: float) -> float:
@@ -220,6 +225,17 @@ def md(summary: dict, bench: dict | None) -> str:
         for goal, (k_off, k_on, k_hitl, n, k_offh) in sorted(pooled[ap].items()):
             L.append(f"| {APPROACH_NAME[ap]} | {goal} | {n} | {fmt(rate(k_off, n))} | {fmt(rate(k_offh, n))} | {fmt(rate(k_on, n))} | "
                      f"{fmt(rate(k_hitl, n))} |")
+    L += ["", "### Attack success by injection channel (pooled over LLM models, defences off, no human gate)", "",
+          "| approach | channel | off, auto |", "|---|---|---|"]
+    ch: dict = defaultdict(lambda: [0, 0])
+    for g in G:
+        if g["approach"] == "R":
+            continue
+        for c in g["attack_cases"].values():
+            ch[(g["approach"], c["channel"])][0] += c["off"]
+            ch[(g["approach"], c["channel"])][1] += c["n"]
+    for (ap, cname), (k, n) in sorted(ch.items()):
+        L.append(f"| {APPROACH_NAME[ap]} | {cname} | {fmt(rate(k, n))} |")
     L += ["", "## 4. Latency and throughput on NVIDIA L4 (24 GB)", "",
           "LLM call = one Ollama chat request on a warm model. Replies served from the local response cache (identical prompt, e.g. the first call of C equals that of B) keep the latency measured when they were generated. Step = one full proposal including LLM "
           "call(s), repair rounds, geometry build, rule check and (A) sandbox start.", "",

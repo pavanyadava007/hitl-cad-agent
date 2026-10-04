@@ -77,12 +77,14 @@ Measured on an NVIDIA L4 (24 GB), Ollama in Docker, temperature 0, num_ctx 8192.
 |---|---|---|---|---|---|---|---|---|
 | none (rules baseline) | R rules baseline | 61% [45-75] (22/36) | 61% [45-75] (22/36) | 1.00 | 8% [3-22] (3/36) | 0% [0-14] (0/24) | 0% [0-14] (0/24) | 0.07 |
 | qwen2.5-coder:7b | A free code | 58% [42-73] (21/36) | 86% [71-94] (31/36) | 1.35 | 3% [0-14] (1/36) | 25% [12-45] (6/24) | 0% [0-14] (0/24) | 10.83 |
-| qwen2.5-coder:7b | B typed tools | 69% [60-77] (75/108) | 89% [82-94] (96/108) | 1.25 | 3% [1-8] (3/108) | 12% [7-22] (9/72) | 0% [0-5] (0/72) | 1.22 |
+| qwen2.5-coder:7b | B typed tools | 69% [60-77] (75/108) | 89% [82-94] (96/108) | 1.25 | 3% [1-8] (3/108) | 13% [7-22] (9/72) | 0% [0-5] (0/72) | 1.22 |
 | qwen2.5-coder:7b | C tools + repair | 86% [78-91] (93/108) | 92% [85-96] (99/108) | 1.12 | 3% [1-8] (3/108) | 4% [1-12] (3/72) | 0% [0-5] (0/72) | 1.29 |
 | llama3.1:8b | A free code | 67% [50-80] (24/36) | 94% [82-98] (34/36) | 1.29 | 6% [2-18] (2/36) | 50% [31-69] (12/24) | 0% [0-14] (0/24) | 11.70 |
+| llama3.1:8b | B typed tools | 58% [49-67] (63/108) | 91% [84-95] (98/108) | 1.44 | 8% [4-15] (9/108) | 29% [20-41] (21/72) | 0% [0-5] (0/72) | 0.95 |
+| llama3.1:8b | C tools + repair | 81% [72-87] (87/108) | 91% [84-95] (98/108) | 1.14 | 8% [4-15] (9/108) | 17% [10-27] (12/72) | 0% [0-5] (0/72) | 1.20 |
 | qwen3-coder:30b | A free code | 58% [42-73] (21/36) | 86% [71-94] (31/36) | 1.32 | 11% [4-25] (4/36) | 46% [28-65] (11/24) | 0% [0-14] (0/24) | 7.29 |
 | qwen3-coder:30b | B typed tools | 72% [63-80] (78/108) | 89% [82-94] (96/108) | 1.19 | 8% [4-15] (9/108) | 24% [15-35] (17/72) | 0% [0-5] (0/72) | 0.84 |
-| qwen3-coder:30b | C tools + repair | 83% [75-89] (90/108) | 92% [85-96] (99/108) | 1.09 | 8% [4-15] (9/108) | 12% [7-22] (9/72) | 0% [0-5] (0/72) | 0.84 |
+| qwen3-coder:30b | C tools + repair | 83% [75-89] (90/108) | 92% [85-96] (99/108) | 1.09 | 8% [4-15] (9/108) | 13% [7-22] (9/72) | 0% [0-5] (0/72) | 0.84 |
 <!-- RESULTS:END -->
 
 How to read it: "task success (auto)" is the first proposal with no human involved; "HITL accepted" allows up to
@@ -119,8 +121,10 @@ Full reproduction: `scripts/run_all.sh` (it starts and stops the Ollama containe
   An attack "success" therefore means the agent made the call, not that the machine was changed.
 - At temperature 0 extra seeds change little (see RESULTS.md section 5); confidence intervals are wide for small n.
 - Only execution-layer defences were tested. Prompt-level defences (spotlighting, instruction hierarchy) were not.
-- qwen2.5-coder:7b approach A has one seed (the first full run was interrupted during seed 1); qwen3-coder:30b
-  coverage is listed per run in RESULTS.md.
+- Approach A was run with one seed per model (B and C with three); A is 8 to 12 times slower per step than B and at
+  temperature 0 extra seeds changed 0 to 2 of 36 first proposals for B/C.
+- `docs/review_demo.txt` is a real `hca review` session, but the reviewer input was piped in by a script, not typed
+  by an engineer. No user study was done.
 
 ## Publishing (not done yet)
 
