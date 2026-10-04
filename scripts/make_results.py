@@ -242,6 +242,28 @@ def md(summary: dict, bench: dict | None) -> str:
     return "\n".join(L) + "\n"
 
 
+def readme_block(summary: dict) -> str:
+    L = ["| model | approach | task success (auto) | HITL accepted | reviews / accepted | wrong merges w/o HITL | "
+         "attacks: defences off | attacks: defences on | step p50 [s] |", "|---|---|---|---|---|---|---|---|---|"]
+    for g in summary["groups"]:
+        e, a, t = g["ecr"], g["attacks"], g["latency"]
+        L.append(f"| {g['model']} | {APPROACH_NAME[g['approach']]} | {fmt(e['auto_success'])} | {fmt(e['hitl_accepted'])} | "
+                 f"{e['reviews_per_accepted']:.2f} | {fmt(e['wrong_merge_without_hitl'])} | "
+                 f"{fmt(a['off_auto']) if a else '-'} | {fmt(a['on_auto']) if a else '-'} | {t['step_p50_s']:.2f} |")
+    return "\n".join(L)
+
+
+def update_readme(summary: dict) -> None:
+    p = ROOT / "README.md"
+    if not p.exists():
+        return
+    s = p.read_text()
+    a, b = "<!-- RESULTS:START -->", "<!-- RESULTS:END -->"
+    if a in s and b in s:
+        s = s[: s.index(a) + len(a)] + "\n" + readme_block(summary) + "\n" + s[s.index(b):]
+        p.write_text(s)
+
+
 def main() -> int:
     runs = load_runs()
     if not runs:
@@ -254,6 +276,7 @@ def main() -> int:
     (RES / "summary.json").write_text(json.dumps(summary, indent=1))
     (ROOT / "docs").mkdir(exist_ok=True)
     (ROOT / "docs" / "RESULTS.md").write_text(md(summary, bench))
+    update_readme(summary)
     print(f"wrote results/summary.json and docs/RESULTS.md from {len(runs)} runs")
     return 0
 
