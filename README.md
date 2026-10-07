@@ -126,11 +126,13 @@ Full reproduction: `scripts/run_all.sh` (it starts and stops the Ollama containe
 - `docs/review_demo.txt` is a real `hca review` session, but the reviewer input was piped in by a script, not typed
   by an engineer. No user study was done.
 
-## Publishing (not done yet)
+## Publishing
+
+Published on 2026-10-04: code at github.com/pavanyadava007/hitl-cad-agent, static demo Space at
+huggingface.co/spaces/pavanyadava07/hitl-cad-agent. To rebuild the Space:
 
 ```bash
-gh repo create pavanyadava007/hitl-cad-agent --public --source . --push
-pip install huggingface_hub && python scripts/publish_hf.py --upload   # static Space pavanyadava07/hitl-cad-agent
+pip install huggingface_hub && python scripts/publish_hf.py --upload
 ```
 
 `python scripts/publish_hf.py` without `--upload` only rebuilds `site/`.
